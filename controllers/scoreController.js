@@ -27,9 +27,9 @@ const getScores = async (req, res) => {
         const scores = await Scores.find().sort({ scores: -1 }).limit(50);
 
         // Ha nincs adat, visszaküldünk egy üres tömböt
-        if (!scores || scores.length === 0) {
-            return res.status(404).json({ message: "No scores found" });
-        }
+        // if (!scores || scores.length === 0) {
+        //     return res.status(404).json({ message: "No scores found" });
+        // }
 
         return res.status(200).json(scores);
     } catch (error) {
@@ -38,5 +38,16 @@ const getScores = async (req, res) => {
     }
 };
 
+const clearScores = async (req, res) => {
+    try {
+       await Scores.deleteMany({})
+        return res.status(200).json({message: "scores cleared"});
+    } catch (error) {
+        console.error("Error clearing scores:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
 
-module.exports = {getScores, postScores};
+
+
+module.exports = {getScores, postScores, clearScores};

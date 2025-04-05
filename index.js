@@ -30,6 +30,7 @@ app.use(function (req, res, next) {
 
 app.post('/scores',scoreController.postScores);
 app.get('/scores',scoreController.getScores);
+//app.post('/clearscores',scoreController.clearScores);
 
 mongoose.connect(process.env.DB_CONNECTION).catch(error=>console.log(error));
 
