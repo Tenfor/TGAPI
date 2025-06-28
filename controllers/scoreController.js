@@ -50,9 +50,9 @@ const clearScores = async (req, res) => {
 
 const ping = async (req, res) => {
     try{
-        return res.status(200).message("SUCCESS");
+        return res.status(200).json({message: "PING SUCCESS"});
     }catch(error){
-        return res.status(500).message("FAIL");
+        return res.status(500).json({message:"PING FAILED"});
     }
 }
 
