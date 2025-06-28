@@ -48,6 +48,14 @@ const clearScores = async (req, res) => {
     }
 };
 
+const ping = async (req, res) => {
+    try{
+        return res.status(200);
+    }catch(error){
+        return res.status(500);
+    }
+}
 
 
-module.exports = {getScores, postScores, clearScores};
+
+module.exports = {getScores, postScores, clearScores, ping};

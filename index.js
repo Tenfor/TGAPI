@@ -28,6 +28,7 @@ app.use(function (req, res, next) {
 
 
 
+app.get('/ping',scoreController.ping);
 app.post('/scores',scoreController.postScores);
 app.get('/scores',scoreController.getScores);
 //app.post('/clearscores',scoreController.clearScores);
