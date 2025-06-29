@@ -5,23 +5,27 @@ const postScores = async (req, res) => {
         if (!playerName) throw new Error("playerName field is missing from body");
         if (!scores) throw new Error("scores field is missing from body");
 
-        console.log("POST SCORES", req.body);
+        const existing = await Scores.findOne({ playerName });
 
-        const entry = await Scores.findOneAndUpdate(
-            { playerName }, // keresési feltétel
-            {
-                $set: {
-                    scores: scores,
-                    date: Date.now(),
-                }
-            },
-            {
-                new: true,      // visszatér az új dokumentummal
-                upsert: true,   // ha nem talál, létrehoz egyet
+        if (existing) {
+            if (scores > existing.scores) {
+                existing.scores = scores;
+                existing.date = Date.now();
+                const updated = await existing.save();
+                return res.status(200).json(updated);
+            } else {
+                return res.status(409).json({ message: "Score not high enough to update.", current: existing });
             }
-        );
-
-        res.status(200).json(entry);
+        } else {
+            // Új rekord létrehozása
+            const newEntry = new Scores({
+                playerName,
+                scores,
+                date: Date.now(),
+            });
+            const saved = await newEntry.save();
+            return res.status(200).json(saved);
+        }
         return;
     } catch (error) {
         console.log(error, req.body);
@@ -48,8 +52,8 @@ const getScores = async (req, res) => {
 
 const clearScores = async (req, res) => {
     try {
-       await Scores.deleteMany({})
-        return res.status(200).json({message: "scores cleared"});
+        await Scores.deleteMany({})
+        return res.status(200).json({ message: "scores cleared" });
     } catch (error) {
         console.error("Error clearing scores:", error);
         return res.status(500).json({ error: "Internal server error" });
@@ -57,13 +61,13 @@ const clearScores = async (req, res) => {
 };
 
 const ping = async (req, res) => {
-    try{
-        return res.status(200).json({message: "PING SUCCESS"});
-    }catch(error){
-        return res.status(500).json({message:"PING FAILED"});
+    try {
+        return res.status(200).json({ message: "PING SUCCESS" });
+    } catch (error) {
+        return res.status(500).json({ message: "PING FAILED" });
     }
 }
 
 
 
-module.exports = {getScores, postScores, clearScores, ping};
+module.exports = { getScores, postScores, clearScores, ping };
