@@ -7,12 +7,20 @@ const postScores = async (req, res) => {
 
         console.log("POST SCORES", req.body);
 
-        const newEntry = new Scores({
-            playerName: playerName,
-            scores: scores,
-            date: Date.now(),
-        });
-        const entry = await newEntry.save();
+        const entry = await Scores.findOneAndUpdate(
+            { playerName }, // keresési feltétel
+            {
+                $set: {
+                    scores: scores,
+                    date: Date.now(),
+                }
+            },
+            {
+                new: true,      // visszatér az új dokumentummal
+                upsert: true,   // ha nem talál, létrehoz egyet
+            }
+        );
+
         res.status(200).json(entry);
         return;
     } catch (error) {
